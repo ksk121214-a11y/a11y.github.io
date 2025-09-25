@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>紙ヒコーキゲーム（犬少なめ＋新しい犬だけ加速＋猫GIF＋無敵）</title>
+<title>紙ヒコーキゲーム（隠し無敵モード）</title>
 <style>
   body { 
     margin:0; background:#000; display:flex; flex-direction:column; 
@@ -21,7 +21,7 @@
 <body>
   <canvas id="game" width="320" height="480"></canvas>
   <div id="controls">
-    PC: ← / → で操作, Spaceでリスタート, 0で無敵切替<br>
+    PC: ← / → で操作, Spaceでリスタート<br>
     スマホ: 左タップ=左, 右タップ=右, タップでリスタート
   </div>
 <script>
@@ -54,7 +54,7 @@ document.addEventListener("keydown", e => {
   }
   keys[e.code]=true;
   if(e.code==="Space"&&(state==="gameover"||state==="goal")){ restartGame(); }
-  if(e.code==="Digit0"){ invincible=!invincible; } // ★無敵モード切替
+  if(e.code==="Digit0"){ invincible=!invincible; } // ★隠し無敵モード
 });
 document.addEventListener("keyup", e=>keys[e.code]=false);
 
@@ -136,7 +136,6 @@ function update(now,dt){
     walls=walls.filter(w=>w.y<canvas.height+80);
     if(score>=stage*100){ state="goal"; goalTapeTime=performance.now(); setTimeout(()=>nextStage(),2000); }
   } else if(stage===2){
-    // --- 犬生成（数少なめ + 新しい犬は加速） ---
     if(now-lastSpawn>spawnInterval){
       characters.push({
         x:40+Math.random()*(canvas.width-80),
@@ -144,7 +143,7 @@ function update(now,dt){
         vx:(Math.random()<0.5?-1:1)*(0.05+Math.random()*0.1)*dogSpeedFactor,
         passed:false
       });
-      lastSpawn=now; spawnInterval=2000+Math.random()*1000; // 少なめ
+      lastSpawn=now; spawnInterval=2000+Math.random()*1000;
     }
     for(let c of characters){
       c.y+=scrollSpeed; c.x+=c.vx;
@@ -152,7 +151,7 @@ function update(now,dt){
       if(!c.passed&&c.y>plane.y){
         score++; c.passed=true;
         if(score%10===0){
-          dogSpeedFactor *= 1.2; // ★新しい犬だけ速くなる
+          dogSpeedFactor *= 1.2;
           planeColor=planeColors[Math.floor(Math.random()*planeColors.length)];
         }
       }
@@ -198,7 +197,6 @@ function render(){
   ctx.fillText("SCORE:"+score,10,20);
   ctx.fillText("STAGE:"+stage,10,40);
   ctx.fillText("LV:"+level,250,20);
-  if(invincible){ ctx.fillStyle="#0ff"; ctx.fillText("INVINCIBLE",200,40); }
 
   if(state==="goal"){
     if(performance.now()-goalTapeTime<800){

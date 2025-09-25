@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>紙ヒコーキゲーム（隠し無敵モード）</title>
+<title>紙ヒコーキゲーム（スマホゆったり版）</title>
 <style>
   body { 
     margin:0; background:#000; display:flex; flex-direction:column; 
@@ -33,7 +33,7 @@ const bg1 = new Image(); bg1.src = "bg1.png";
 const bg2 = new Image(); bg2.src = "bg2.png";
 let bgY = 0;
 
-// --- 背景フィルター（ステージ1のみ） ---
+// --- 背景フィルター ---
 const bgFilters = [
   "rgba(255,0,0,0.3)","rgba(0,255,0,0.3)","rgba(0,0,255,0.3)",
   "rgba(255,255,0,0.3)","rgba(255,0,255,0.3)","rgba(0,255,255,0.3)",
@@ -41,7 +41,7 @@ const bgFilters = [
 ];
 let bgFilterIndex = 0;
 
-// --- 紙ヒコーキ色（ステージ2で変化） ---
+// --- 紙ヒコーキ色 ---
 const planeColors = ["#fff","#ff0","#0ff","#f0f","#0f0","#f00","#00f"];
 let planeColor = "#fff";
 
@@ -54,7 +54,7 @@ document.addEventListener("keydown", e => {
   }
   keys[e.code]=true;
   if(e.code==="Space"&&(state==="gameover"||state==="goal")){ restartGame(); }
-  //if(e.code==="Digit0"){ invincible=!invincible; } // ★隠し無敵モード
+  // if(e.code==="Digit0"){ invincible=!invincible; } // 隠し無敵モード（非表示）
 });
 document.addEventListener("keyup", e=>keys[e.code]=false);
 
@@ -74,12 +74,6 @@ const plane={x:160,y:400,scale:2.0,speed:0.018,angle:0,vx:0};
 // --- データ ---
 let walls=[]; let characters=[]; let lastSpawn=0;
 let spawnInterval=1600; let scrollSpeed=0.8; let gapW=140;
-
-// --- ★スマホ判定して縦間隔を広げる ---
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-if(isMobile){
-  spawnInterval = 2400; // ← PCより遅く（縦間隔を広く）
-}
 
 // --- 状態 ---
 let state="running"; let score=0; let level=1; let stage=1; let goalTapeTime=0;
@@ -173,7 +167,7 @@ function update(now,dt){
 // --- 再スタート ---
 function restartGame(){
   walls=[]; characters=[]; score=0; level=1; stage=1;
-  lastSpawn=performance.now(); scrollSpeed=0.8; spawnInterval=isMobile?2400:1600; gapW=140;
+  lastSpawn=performance.now(); scrollSpeed=0.8; spawnInterval=1600; gapW=140;
   plane.x=160; plane.vx=0; plane.angle=0; plane.speed=0.018;
   state="running"; bgFilterIndex=0; planeColor="#fff"; invincible=false;
   dogSpeedFactor=1;
@@ -182,8 +176,12 @@ function restartGame(){
 // --- 次のステージ ---
 function nextStage(){
   stage++; walls=[]; characters=[]; lastSpawn=performance.now();
-  scrollSpeed=0.2; spawnInterval=2000; gapW=140; dogSpeedFactor=1;
-  plane.x=160; plane.vx=0; plane.angle=0; state="running"; bgFilterIndex=0; planeColor="#fff";
+  scrollSpeed=0.2; 
+  spawnInterval=3000; // ★スマホ用に縦間隔広げた
+  gapW=160;           // ★障害物の幅も広め
+  dogSpeedFactor=1;
+  plane.x=160; plane.vx=0; plane.angle=0; state="running"; 
+  bgFilterIndex=0; planeColor="#fff";
 }
 
 // --- 描画 ---

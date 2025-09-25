@@ -54,7 +54,7 @@ document.addEventListener("keydown", e => {
   }
   keys[e.code]=true;
   if(e.code==="Space"&&(state==="gameover"||state==="goal")){ restartGame(); }
-  if(e.code==="Digit0"){ invincible=!invincible; } // ★隠し無敵モード
+  //if(e.code==="Digit0"){ invincible=!invincible; } // ★隠し無敵モード
 });
 document.addEventListener("keyup", e=>keys[e.code]=false);
 

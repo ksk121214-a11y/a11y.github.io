@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>紙ヒコーキゲーム（スマホ3秒固定）</title>
+<title>紙ヒコーキゲーム（スマホ加速版）</title>
 <style>
   body { 
     margin:0; background:#000; display:flex; flex-direction:column; 
@@ -125,11 +125,17 @@ function update(now,dt){
         score++; w.passed=true;
         if(score%10===0){
           level++; scrollSpeed+=0.1;
-          // PCだけ短くする、スマホは固定
           if(!isMobile){ spawnInterval=Math.max(600,spawnInterval-80); }
-          gapW=Math.max(60,gapW-8); plane.speed+=0.003;
+          gapW=Math.max(60,gapW-8); 
+          plane.speed+=0.003;
           bgFilterIndex=Math.floor(Math.random()*bgFilters.length);
         }
+
+        // ★スマホ用：20ポイントごとに紙ヒコーキ加速
+        if(isMobile && score % 20 === 0){
+          plane.speed += 0.005; 
+        }
+
         if(score%20===0){
           let count=2+Math.floor(Math.random()*3);
           for(let i=0;i<count;i++){ setTimeout(spawnCat,i*400); }
@@ -156,9 +162,16 @@ function update(now,dt){
       if(c.x<20||c.x>canvas.width-20) c.vx*=-1;
       if(!c.passed&&c.y>plane.y){
         score++; c.passed=true;
+
+        // 犬スピード・紙ヒコーキカラー変化
         if(score%10===0){
           dogSpeedFactor *= 1.2;
           planeColor=planeColors[Math.floor(Math.random()*planeColors.length)];
+        }
+
+        // ★スマホ用：20ポイントごとに紙ヒコーキ加速
+        if(isMobile && score % 20 === 0){
+          plane.speed += 0.005; 
         }
       }
       if(Math.abs(plane.x-c.x)<c.size/2&&Math.abs(plane.y-c.y)<c.size/2){
